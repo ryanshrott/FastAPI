@@ -63,7 +63,7 @@ async def send_verification(email: EmailSchema):
         })
 
     # generate the email content
-    msg = f'Please click on the following link to verify your email:\nhttp://localhost:8001/verify_email?token={token}&email={quote(email.email)}'
+    msg = f'Please click on the following link to verify your email:\nhttps://fastapi-production-86e9.up.railway.app/verify_email?token={token}&email={quote(email.email)}'
     subject = 'Email verification'
 
     # send the email
