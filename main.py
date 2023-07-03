@@ -9,7 +9,8 @@ from airtable import Airtable
 import secrets
 import os
 from dotenv import load_dotenv
-
+from fastapi import FastAPI, HTTPException, Response, status
+from fastapi.responses import RedirectResponse
 load_dotenv(".env")
 
 app = FastAPI()
@@ -24,14 +25,15 @@ def send_email(subject, message, to_address):
     from_address = 'ryan@smartbids.ai'
     password = os.getenv("EMAIL_PASS")
     msg = MIMEMultipart()
-    msg['From'] = from_address
+    msg['From'] = "SmartBids.ai - Email verification <" + from_address + ">"
     msg['To'] = to_address
     msg['Subject'] = subject
-    msg.attach(MIMEText(message, 'plain'))
+    msg.attach(MIMEText(message, 'html'))
     server = smtplib.SMTP_SSL('mail.privateemail.com', 465)
     server.login(from_address, password)
     text = msg.as_string()
     server.sendmail(from_address, to_address, text)
+    print('email sent')
     server.quit()
 
 @app.post("/send_verification")
@@ -63,14 +65,13 @@ async def send_verification(email: EmailSchema):
         })
 
     # generate the email content
-    msg = f'Please click on the following link to verify your email:\nhttps://fastapi-production-86e9.up.railway.app/verify_email?token={token}&email={quote(email.email)}'
+    msg = f'<p>Welcome to SmartBids.ai!</p><p>Please click on the following link to verify your email:</p><a href="https://fastapi-production-86e9.up.railway.app/verify_email?token={token}&email={quote(email.email)}">Verify Email</a><p>Thank you,</p><p>SmartBids.ai Team</p>'
     subject = 'Email verification'
 
     # send the email
     send_email(subject, msg, email.email)
 
     return {"message": "Verification email sent"}
-
 
 
 @app.get("/verify_email")
@@ -81,6 +82,7 @@ async def verify_email(token: str, email: str):
         if record['fields'].get('token') == token:
             # update the verified field to True
             airtable.update(record['id'], {'verified': True})
-            return {"message": "Email verified"}
+            return RedirectResponse(url='https://app.smartbids.ai', status_code=status.HTTP_303_SEE_OTHER)
 
     raise HTTPException(status_code=400, detail="Invalid token or email")
+
