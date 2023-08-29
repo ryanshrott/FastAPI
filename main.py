@@ -16,7 +16,7 @@ load_dotenv(".env")
 app = FastAPI()
 
 # MongoDB setup
-mongo_uri = os.environ['MONGO_URI']
+mongo_uri = os.environ['MONGO_AUTH']
 client = MongoClient(mongo_uri)
 db = client['smartbids']
 users_collection = db['users']
