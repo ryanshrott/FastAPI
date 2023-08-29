@@ -2,6 +2,6 @@ fastapi
 uvicorn
 python-multipart
 python-dotenv
-airtable-python-wrapper
+pymongo
 pydantic[dotenv]
 pydantic[email]
