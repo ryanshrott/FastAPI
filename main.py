@@ -91,9 +91,9 @@ async def create_lead(lead: LeadSchema):
 
 
 @app.post("/send_verification")
-async def send_verification(email: EmailSchema):
+async def send_verification(email: str):
     token = secrets.token_hex(20)
-    existing_user = users_collection.find_one({'email': email.email})
+    existing_user = users_collection.find_one({'email': email})
 
     if existing_user:
         if existing_user.get('verified', False):
@@ -110,7 +110,7 @@ async def send_verification(email: EmailSchema):
         )
     else:
         users_collection.insert_one({
-            "email": email.email,
+            "email": email,
             "token": token,
             "verified": False
         })
