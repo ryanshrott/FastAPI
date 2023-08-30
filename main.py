@@ -91,9 +91,9 @@ async def create_lead(lead: LeadSchema):
 
 
 @app.post("/send_verification")
-async def send_verification(email: str):
+async def send_verification(email: EmailSchema):
     token = secrets.token_hex(20)
-    existing_user = users_collection.find_one({'email': email})
+    existing_user = users_collection.find_one({'email': email.email})
 
     if existing_user:
         if existing_user.get('verified', False):
@@ -110,15 +110,15 @@ async def send_verification(email: str):
         )
     else:
         users_collection.insert_one({
-            "email": email,
+            "email": email.email,
             "token": token,
             "verified": False
         })
 
     # [Rest of your email generation and sending logic]
-    msg = f'<p>Welcome to SmartBids.ai!</p><p>Please click on the following link to verify your email:</p><a href="{email_base_url}/verify_client?token={token}&email={quote(email)}&">Verify Email</a><p>Thank you,</p><p>SmartBids.ai Team</p>'
+    msg = f'<p>Welcome to SmartBids.ai!</p><p>Please click on the following link to verify your email:</p><a href="{email_base_url}/verify_client?token={token}&email={quote(email.email)}&">Verify Email</a><p>Thank you,</p><p>SmartBids.ai Team</p>'
     subject = 'Email verification'
-    send_email(subject, msg, email)
+    send_email(subject, msg, email.email)
 
     return {"message": "Verification email sent"}
 
