@@ -116,9 +116,9 @@ async def send_verification(email: str):
         })
 
     # [Rest of your email generation and sending logic]
-    msg = f'<p>Welcome to SmartBids.ai!</p><p>Please click on the following link to verify your email:</p><a href="{email_base_url}/verify_client?token={token}&email={quote(email.email)}&">Verify Email</a><p>Thank you,</p><p>SmartBids.ai Team</p>'
+    msg = f'<p>Welcome to SmartBids.ai!</p><p>Please click on the following link to verify your email:</p><a href="{email_base_url}/verify_client?token={token}&email={quote(email)}&">Verify Email</a><p>Thank you,</p><p>SmartBids.ai Team</p>'
     subject = 'Email verification'
-    send_email(subject, msg, email.email)
+    send_email(subject, msg, email)
 
     return {"message": "Verification email sent"}
 
