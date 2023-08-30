@@ -124,7 +124,7 @@ async def send_verification(email: EmailSchema):
 
 
 @app.get("/verify_client", response_class=HTMLResponse)
-async def verify_client(token: str, email: str, phone: str, db_type: str = "users"):
+async def verify_client(token: str, email: str, phone: Optional[str] = None, db_type: str = "users"):
     collection = users_collection if db_type == "users" else leads_collection
     record = collection.find_one({'email': email, 'token': token})
 
